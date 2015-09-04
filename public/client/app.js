@@ -7,4 +7,7 @@ angular.module('coderace', ['coderace.race', 'ngRoute'])
     templateUrl: 'client/Race/race.html',
     controller: 'RaceController'
   })
-});
+})
+.provider('$socket', $socketProvider(){
+  
+})

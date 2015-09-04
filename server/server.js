@@ -16,6 +16,7 @@ io.on('connection', function (socket) {
   socket.emit('userId', {userId:userCount});
   userIds.push(userId);
   console.log('connection');
+<<<<<<< HEAD
   socket.on('typing', function (data) {
     if(userIds.indexOf(data.userId)){
       io.sockets.emit('typing',{
