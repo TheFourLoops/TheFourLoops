@@ -22,5 +22,4 @@
       userId:userId
     });
   })
-
 })();
