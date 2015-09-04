@@ -9,7 +9,13 @@ app.use(express.static('public'));
 
 io.on('connection', function (socket) {
   console.log('connection');
-  socket.on('typing', function (data) {
-    console.log(data);
+
+  socket.on('echo', function (data) {
+    socket.emit('echo', data);
   });
+
+  socket.on('echo-ack', function (data, callback) {
+        callback(data);
+  });
+
 });
