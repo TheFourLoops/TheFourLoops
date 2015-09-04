@@ -7,9 +7,6 @@ server.listen(3000);
 
 app.use(express.static('public'));
 
-var userCount = 0;
-var userIds = [];
-
 io.on('connection', function (socket) {
   var userId = userCount++;
   socket.emit('userId', {userId:userCount});
