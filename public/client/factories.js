@@ -25,43 +25,51 @@ angular.module('coderace.factories', [])
 })
 
 .factory('Race', function ($rootScope) {
-  var dataRef = new Firebase("https://popping-heat-272.firebaseio.com/");
-
-  dataRef.set({
-    Challenges: {
-      sum: {
-        Question: "Write a sum function that sums up all of its parameters.",
-        Inputs: [[1,2,3], [10,20,3]],
-        Outputs: [6, 33],
-        Start: "var sum = function(){}"
-      },
-      reverse: {
-        Question: "Write a reverse function that reverses the string.",
-        Inputs: ["run", "face"],
-        Outputs: ["nur", "ecaf"],
-        Start: "var reverse = function(){}"
-      }
-    }
-  });
-
   var factory = {};
-  factory.question = [];
-  factory.input = [];
-  factory.output = [];
-  factory.name = [];
-  factory.start = [];
+  // var problem = null;
 
-  dataRef.child("Challenges").on("value", function(snapshot) {
-    var obj = snapshot.val();
-    for(var key in obj){
-      factory.name.push(key);
-      factory.question.push(obj[key].Question);
-      factory.input.push(obj[key].Inputs);
-      factory.output.push(obj[key].Outputs);
-      factory.start.push(obj[key].Start);
-    }
+  factory.dataRef = new Firebase("https://popping-heat-272.firebaseio.com/");
 
-  });
+  // factory.dataRef.child("Challenges").set([
+  //   {
+  //     functionName: "sum",
+  //     question: "Write a sum function that sums up all of its parameters",
+  //     inputs: [[1,2,3], [10, 20, 3]],
+  //     answers: [6, 33],
+  //     startingCode: "var sum = function() {}"
+  //   },
+  //   {
+  //     functionName: "reverse",
+  //     question: "Write a reverse function that reverses the string",
+  //     inputs: ['run', 'face'],
+  //     answers: ['nur', 'ecaf'],
+  //     startingCode: "var reverse = function() {}"
+  //   }
+  // ]);
+
+  /*  called by slave user  */
+  factory.setProblem = function(data){
+    $rootScope.problem = data;
+    $rootScope.$broadcast('Race:ready', $rootScope.problem);
+  };
+
+  /*  called by master user, call to Firebase to get problem  */
+  factory.getData = function(index, callback){
+    factory.dataRef.child("Challenges").child(index).on("value", function(snapshot) {
+      var problem = snapshot.val();
+      $rootScope.$broadcast('Race:ready', problem);
+      callback(problem);// send slave the problem
+    });
+  };
+  
+  factory.getLength = function(){
+    factory.dataRef.child("Challenges").on("value", function(snapshot) {
+      var challenges = snapshot.val();
+      $rootScope.$broadcast('GotLength', challenges.length);
+    });
+  };
+
   return factory;
 
 });
+
